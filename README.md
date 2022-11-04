@@ -2,13 +2,18 @@
 
 [Snap](https://snapcraft.io) package for xtrabackup open source backup tool by Percona.
 
-## Installation
+## Build
 
-On snap enabled system:
+```console
+snapcraft
+```
 
+## Install
+
+```console
+sudo snap install ./xtrabackup_8.0.29-22_amd64.snap --dangerous
 ```
-sudo snap install xtrabackup --channel=edge
-```
+
 
 ## Usage
 
