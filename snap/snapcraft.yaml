@@ -1,0 +1,85 @@
+name: xtrabackup
+base: core20 # core22 has openssl-3.x.x and xtrabackup require openssl-1.1.x
+summary: |
+  Open source backup tool for InnoDB and XtraDB
+description: |
+  Open source backup tool for InnoDB and XtraDB
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict
+adopt-info: xtrabackup
+environment:
+  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+  PATH: $SNAP/bin:$PATH
+  LC_ALL: C
+
+apps:
+  xtrabackup:
+    command: runtime_output_directory/xtrabackup
+    plugs:
+      - network
+      - removable-media
+      - home
+
+parts:
+  xtrabackup:
+    plugin: dump
+    source: https://github.com/percona/percona-xtrabackup
+    source-type: git
+    source-branch: "8.0"
+    override-build: |
+      last_committed_tag="$(git tag -l --sort=version:refname "percona-xtrabackup-8*" | tail -1)"
+      git checkout ${last_committed_tag}
+      # retrieve submodules (libkmip)
+      git submodule update --init --recursive
+      # clean out build directory
+      rm -rf ${SNAPCRAFT_PART_BUILD}/*
+
+      cmake ../src -DWITH_BOOST=$SNAPCRAFT_PART_BUILD/../../boost/src \
+        -DBUILD_CONFIG=xtrabackup_release \
+        -DWITH_MAN_PAGES=OFF \
+        -DIGNORE_AIO_CHECK=ON \
+        -DWITH_AUTHENTICATION_FIDO=OFF \
+        -DWITH_AUTHENTICATION_KERBEROS=OFF \
+        -DWITH_AUTHENTICATION_LDAP=OFF
+      make -j8
+      snapcraftctl build
+      snapcraftctl set-version $(echo ${last_committed_tag} | sed "s/percona-xtrabackup-//g")
+    build-packages:
+      - bison
+      - cmake
+      - g++
+      - gcc
+      - libcurl4
+      - libcurl4-gnutls-dev
+      - libev-dev
+      - libgcrypt20-dev
+      - libncurses5-dev
+      - libssl-dev
+      - pkg-config
+      - xxd
+    stage-packages:
+      - libasn1-8-heimdal
+      - libbrotli1
+      - libcurl3-gnutls
+      - libev4
+      - libgssapi3-heimdal
+      - libhcrypto4-heimdal
+      - libheimbase1-heimdal
+      - libheimntlm0-heimdal
+      - libhx509-5-heimdal
+      - libkrb5-26-heimdal
+      - libldap-2.4-2
+      - libnghttp2-14
+      - libpsl5
+      - libroken18-heimdal
+      - librtmp1
+      - libsasl2-2
+      - libssh-4
+      - libwind0-heimdal
+  boost:
+    plugin: dump
+    source-type: tar
+    source: https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.bz2
+    override-build: ":" # Do nothing
+    build-packages:
+      - bzip2
