@@ -54,6 +54,7 @@ parts:
       - libev-dev
       - libgcrypt20-dev
       - libncurses5-dev
+      - libprocps-dev
       - libssl-dev
       - pkg-config
       - xxd
