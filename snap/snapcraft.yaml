@@ -18,6 +18,30 @@ apps:
       - network
       - removable-media
       - home
+  xbcloud:
+    command: usr/bin/xbcloud
+    plugs:
+      - network
+      - removable-media
+      - home
+  xbcloud_osenv:
+    command: usr/bin/xbcloud_osenv
+    plugs:
+      - network
+      - removable-media
+      - home
+  xbcrypt:
+    command: usr/bin/xbcrypt
+    plugs:
+      - network
+      - removable-media
+      - home
+  xbstream:
+    command: usr/bin/xbstream
+    plugs:
+      - network
+      - removable-media
+      - home
 
 parts:
   xtrabackup:
