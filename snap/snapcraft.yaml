@@ -24,7 +24,7 @@ apps:
       - network
       - removable-media
       - home
-  xbcloud_osenv:
+  xbcloud-osenv:
     command: usr/bin/xbcloud_osenv
     plugs:
       - network
