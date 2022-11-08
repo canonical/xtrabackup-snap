@@ -1,7 +1,6 @@
 name: xtrabackup
 base: core20 # core22 has openssl-3.x.x and xtrabackup require openssl-1.1.x
-summary: |
-  Open source backup tool for InnoDB and XtraDB
+summary: Open source backup tool for InnoDB and XtraDB
 description: |
   Open source backup tool for InnoDB and XtraDB
 grade: stable # must be 'stable' to release into candidate/stable channels
@@ -30,6 +29,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DINSTALL_LAYOUT=DEB
       - -DBUILD_CONFIG=xtrabackup_release
+      - -DCMAKE_BUILD_TYPE=Release
       - -DWITH_MAN_PAGES=OFF
       - -DIGNORE_AIO_CHECK=ON
       - -DWITH_AUTHENTICATION_FIDO=OFF
@@ -42,6 +42,12 @@ parts:
     override-build: |
       snapcraftctl build
       snapcraftctl set-version "8.0.29-22"
+    override-prime: |
+      snapcraftctl prime
+      rm -rf $SNAPCRAFT_PRIME/usr/share
+      rm -rf $SNAPCRAFT_PRIME/usr/include
+      rm -rf $SNAPCRAFT_PRIME/man1
+      rm -rf $SNAPCRAFT_PRIME/man8
     build-packages:
       - bison
       - cmake
@@ -82,3 +88,4 @@ parts:
     override-build: ":" # Do nothing
     build-packages:
       - bzip2
+
