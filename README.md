@@ -11,7 +11,7 @@ snapcraft
 ## Install
 
 ```console
-sudo snap install ./xtrabackup_8.0.29-22_amd64.snap --dangerous
+sudo snap install ./xtrabackup_8.0.30-23_amd64.snap --dangerous --classic
 ```
 
 
