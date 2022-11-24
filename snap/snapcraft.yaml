@@ -4,10 +4,10 @@ summary: Open source backup tool for InnoDB and XtraDB
 description: |
   Open source backup tool for InnoDB and XtraDB
 grade: stable # must be 'stable' to release into candidate/stable channels
-confinement: strict
+confinement: classic
 adopt-info: xtrabackup
 environment:
-  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu
   PATH: $SNAP/bin:$PATH
   LC_ALL: C
 
@@ -48,7 +48,7 @@ parts:
     plugin: cmake
     source: https://github.com/percona/percona-xtrabackup.git
     source-type: git
-    source-tag: "percona-xtrabackup-8.0.29-22"
+    source-tag: "percona-xtrabackup-8.0.30-23"
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DINSTALL_LAYOUT=DEB
@@ -65,7 +65,7 @@ parts:
     after: [boost]
     override-build: |
       snapcraftctl build
-      snapcraftctl set-version "8.0.29-22"
+      snapcraftctl set-version "8.0.30-23"
     override-prime: |
       snapcraftctl prime
       rm -rf $SNAPCRAFT_PRIME/usr/share
