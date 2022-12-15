@@ -1,0 +1,38 @@
+--- a/storage/innobase/xtrabackup/src/xtrabackup.cc
++++ b/storage/innobase/xtrabackup/src/xtrabackup.cc
+@@ -4196,6 +4196,19 @@ static void cleanup_mysql_environment() {
+   mysql_mutex_destroy(&LOCK_replica_list);
+ }
+ 
++void prepend_snap_path(char *path) {
++    /* if running inside snap, preprend hostfs path */
++    if (getenv("SNAP") != NULL) {
++        char snap_prefix[FN_REFLEN] = "/var/lib/snapd/hostfs";
++        char *new_path = (char *)malloc(strlen(path) + strlen(snap_prefix) + 2);
++        strcpy(new_path, snap_prefix);
++        strcat(new_path, path);
++        strcpy(path, new_path);
++        free(new_path);
++    }
++
++}
++
+ void xtrabackup_backup_func(void) {
+   MY_STAT stat_info;
+   uint i;
+@@ -4219,6 +4232,7 @@ void xtrabackup_backup_func(void) {
+ #endif
+ 
+   /* cd to datadir */
++  prepend_snap_path(mysql_real_data_home);
+ 
+   if (my_setwd(mysql_real_data_home, MYF(MY_WME))) {
+     xb::error() << "cannot my_setwd " << mysql_real_data_home;
+@@ -4879,6 +4893,7 @@ static void stat_with_rec(dict_table_t *table, THD *thd,
+ static void xtrabackup_stats_func(int argc, char **argv) {
+   /* cd to datadir */
+ 
++  prepend_snap_path(mysql_real_data_home);
+   if (my_setwd(mysql_real_data_home, MYF(MY_WME))) {
+     xb::error() << "cannot my_setwd " << mysql_real_data_home;
+     exit(EXIT_FAILURE);

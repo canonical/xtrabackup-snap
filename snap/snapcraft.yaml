@@ -4,7 +4,7 @@ summary: Open source backup tool for InnoDB and XtraDB
 description: |
   Open source backup tool for InnoDB and XtraDB
 grade: stable # must be 'stable' to release into candidate/stable channels
-confinement: classic
+confinement: strict
 adopt-info: xtrabackup
 environment:
   LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu
@@ -14,14 +14,35 @@ environment:
 apps:
   xtrabackup:
     command: usr/bin/xtrabackup
+    plugs:
+      - network
+      - removable-media
+      - home
+      - system-backup
   xbcloud:
     command: usr/bin/xbcloud
+    plugs:
+      - network
+      - removable-media
+      - home
   xbcloud-osenv:
     command: usr/bin/xbcloud_osenv
+    plugs:
+      - network
+      - removable-media
+      - home
   xbcrypt:
     command: usr/bin/xbcrypt
+    plugs:
+      - network
+      - removable-media
+      - home
   xbstream:
     command: usr/bin/xbstream
+    plugs:
+      - network
+      - removable-media
+      - home
 
 parts:
   xtrabackup:
@@ -43,7 +64,15 @@ parts:
       - -DINSTALL_MANDIR=
       - -DWITH_BOOST=$SNAPCRAFT_PART_BUILD/../../boost/src
     after: [boost]
+    override-pull: |
+      git clone --branch percona-xtrabackup-8.0.30-23 --depth 1 \
+        https://github.com/percona/percona-xtrabackup.git .
+      git submodule update --init
     override-build: |
+      cd $SNAPCRAFT_PART_SRC
+      git checkout .
+      patch -s -p1 < $SNAPCRAFT_PROJECT_DIR/xtrabackup_snap_path.patch
+      cd $SNAPCRAFT_PART_BUILD
       snapcraftctl build
       snapcraftctl set-version "8.0.30-23"
     override-prime: |
@@ -92,4 +121,3 @@ parts:
     override-build: ":" # Do nothing
     build-packages:
       - bzip2
-
