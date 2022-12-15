@@ -18,7 +18,7 @@ apps:
       - network
       - removable-media
       - home
-      - system-backup
+      - mysql-files
   xbcloud:
     command: usr/bin/xbcloud
     plugs:
@@ -43,6 +43,12 @@ apps:
       - network
       - removable-media
       - home
+
+plugs:
+  mysql-files:
+    interface: system-files
+    write:
+      - /var/lib/mysql
 
 parts:
   xtrabackup:

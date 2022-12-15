@@ -5,24 +5,27 @@
 ## Build
 
 ```console
-snapcraft
+foo@bar:~$ snapcraft
+# or
+foo@bar:~$ snapcraft --use-lxd
 ```
 
 ## Install
 
 ```console
-sudo snap install ./xtrabackup_8.0.30-23_amd64.snap --dangerous
+foo@bar:~$ sudo snap install ./xtrabackup_8.0.30-23_amd64.snap --dangerous
 ```
 
 ## Usage
 
-It's necessary to manually connect the `system-backup` interface:
+It's necessary to manually connect the `mysql-files` interface to allow access to
+read (on backup) and write (on restore) to database data directory.
 
 ```console
-sudo snap connect xtrabackup:system-backup
+foo@bar:~$ sudo snap connect xtrabackup:mysql-files
 ```
 
-A example script for backing up to S3 is:
+An example script for backing up to S3 is:
 
 ```bash
 USER="<user>"
@@ -31,7 +34,7 @@ S3_BUCKET="backups"
 S3_PATH="$(date -Iminutes)-backup"
 S3_KEY="<s3-key>"
 S3_SECRET="<s3-secret>"
-HOST="127.0.0.1"
+HOST="a.database.domain"
 
 xtrabackup --defaults-group=mysql --no-version-check \
     --parallel=$(grep -c processor /proc/cpuinfo) \
