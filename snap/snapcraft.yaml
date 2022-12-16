@@ -18,7 +18,7 @@ apps:
       - network
       - removable-media
       - home
-      - mysql-files
+      - mysql-data
   xbcloud:
     command: usr/bin/xbcloud
     plugs:
@@ -45,7 +45,7 @@ apps:
       - home
 
 plugs:
-  mysql-files:
+  mysql-data:
     interface: system-files
     write:
       - /var/lib/mysql

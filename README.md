@@ -22,7 +22,7 @@ It's necessary to manually connect the `mysql-files` interface to allow access t
 read (on backup) and write (on restore) to database data directory.
 
 ```console
-foo@bar:~$ sudo snap connect xtrabackup:mysql-files
+foo@bar:~$ sudo snap connect xtrabackup:mysql-data
 ```
 
 An example script for backing up to S3 is:
