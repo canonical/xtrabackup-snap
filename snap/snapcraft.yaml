@@ -7,7 +7,7 @@ grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
 adopt-info: xtrabackup
 environment:
-  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib
+  LD_LIBRARY_PATH: $SNAP/lib:$SNAP/usr/lib:$SNAP/usr/lib/x86_64-linux-gnu
   PATH: $SNAP/bin:$PATH
   LC_ALL: C
 
@@ -18,13 +18,44 @@ apps:
       - network
       - removable-media
       - home
+      - mysql-data
+  xbcloud:
+    command: usr/bin/xbcloud
+    plugs:
+      - network
+      - removable-media
+      - home
+  xbcloud-osenv:
+    command: usr/bin/xbcloud_osenv
+    plugs:
+      - network
+      - removable-media
+      - home
+  xbcrypt:
+    command: usr/bin/xbcrypt
+    plugs:
+      - network
+      - removable-media
+      - home
+  xbstream:
+    command: usr/bin/xbstream
+    plugs:
+      - network
+      - removable-media
+      - home
+
+plugs:
+  mysql-data:
+    interface: system-files
+    write:
+      - /var/lib/mysql
 
 parts:
   xtrabackup:
     plugin: cmake
     source: https://github.com/percona/percona-xtrabackup.git
     source-type: git
-    source-tag: "percona-xtrabackup-8.0.29-22"
+    source-tag: "percona-xtrabackup-8.0.30-23"
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DINSTALL_LAYOUT=DEB
@@ -39,9 +70,17 @@ parts:
       - -DINSTALL_MANDIR=
       - -DWITH_BOOST=$SNAPCRAFT_PART_BUILD/../../boost/src
     after: [boost]
+    override-pull: |
+      git clone --branch percona-xtrabackup-8.0.30-23 --depth 1 \
+        https://github.com/percona/percona-xtrabackup.git .
+      git submodule update --init
     override-build: |
+      cd $SNAPCRAFT_PART_SRC
+      git checkout .
+      patch -s -p1 < $SNAPCRAFT_PROJECT_DIR/xtrabackup_snap_path.patch
+      cd $SNAPCRAFT_PART_BUILD
       snapcraftctl build
-      snapcraftctl set-version "8.0.29-22"
+      snapcraftctl set-version "8.0.30-23"
     override-prime: |
       snapcraftctl prime
       rm -rf $SNAPCRAFT_PRIME/usr/share
@@ -88,4 +127,3 @@ parts:
     override-build: ":" # Do nothing
     build-packages:
       - bzip2
-
