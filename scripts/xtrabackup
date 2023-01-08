@@ -4,6 +4,7 @@
 # or append default with snap hostfs path prefix
 # TODO:
 # - detect and treat relative paths
+# - add `-h`
 
 set -eo pipefail
 
@@ -12,10 +13,10 @@ STD_DATA_PATH="/var/lib/mysql"
 COMMAND="xtrabackup-bin"
 
 for arg in $@; do
-    if [[ ${arg} ==  -datadir* ]]; then
+    if [[ ${arg} ==  --datadir* ]]; then
         echo "datadir found: ${arg}"
         data_dir=${arg#*=}
-        current_arg="-datadir=${HOSTFS_PREFIX}/${data_dir}"
+        current_arg="--datadir=${HOSTFS_PREFIX}/${data_dir}"
     else
         current_arg=${arg}
     fi
@@ -26,7 +27,7 @@ if [[ -n $data_dir ]]; then
     ${COMMAND} ${args}
     exit $?
 else
-    ${COMMAND} ${args} -datadir=${HOSTFS_PREFIX}${STD_DATA_PATH}
+    ${COMMAND} ${args} --datadir=${HOSTFS_PREFIX}${STD_DATA_PATH}
     exit $?
 fi
 
