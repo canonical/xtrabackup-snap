@@ -1,0 +1,32 @@
+#!/usr/bin/env /bin/bash
+
+# Wrapper to override original datadir argument if set
+# or append default with snap hostfs path prefix
+# TODO:
+# - detect and treat relative paths
+
+set -eo pipefail
+
+HOSTFS_PREFIX="/var/lib/snapd/hostfs"
+STD_DATA_PATH="/var/lib/mysql"
+COMMAND="xtrabackup-bin"
+
+for arg in $@; do
+    if [[ ${arg} ==  -datadir* ]]; then
+        echo "datadir found: ${arg}"
+        data_dir=${arg#*=}
+        current_arg="-datadir=${HOSTFS_PREFIX}/${data_dir}"
+    else
+        current_arg=${arg}
+    fi
+    args="${args} ${current_arg}"
+done
+
+if [[ -n $data_dir ]]; then
+    ${COMMAND} ${args}
+    exit $?
+else
+    ${COMMAND} ${args} -datadir=${HOSTFS_PREFIX}${STD_DATA_PATH}
+    exit $?
+fi
+

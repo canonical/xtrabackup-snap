@@ -75,10 +75,6 @@ parts:
         https://github.com/percona/percona-xtrabackup.git .
       git submodule update --init
     override-build: |
-      cd $SNAPCRAFT_PART_SRC
-      git checkout .
-      patch -s -p1 < $SNAPCRAFT_PROJECT_DIR/xtrabackup_snap_path.patch
-      cd $SNAPCRAFT_PART_BUILD
       snapcraftctl build
       snapcraftctl set-version "8.0.30-23"
     override-prime: |
@@ -87,6 +83,8 @@ parts:
       rm -rf $SNAPCRAFT_PRIME/usr/include
       rm -rf $SNAPCRAFT_PRIME/man1
       rm -rf $SNAPCRAFT_PRIME/man8
+      mv $SNAPCRAFT_PRIME/usr/bin/xtrabackup $SNAPCRAFT_PRIME/usr/bin/xtrabackup-bin
+      cp $SNAPCRAFT_PROJECT_DIR/scripts/xtrabackup $SNAPCRAFT_PRIME/usr/bin/xtrabackup
     build-packages:
       - bison
       - cmake
