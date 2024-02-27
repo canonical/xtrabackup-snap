@@ -1,4 +1,5 @@
 # xtrabackup snap package
+[![Publish](https://github.com/canonical/xtrabackup-snap/actions/workflows/publish.yaml/badge.svg)](https://github.com/canonical/xtrabackup-snap/actions/workflows/publish.yaml)
 
 [Snap](https://snapcraft.io) package for xtrabackup open source backup tool by Percona.
 
